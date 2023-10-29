@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 require('dotenv').config();
 
-const db = mysql.createConnection(
+const dbConnect = mysql.createConnection(
   {
     host: 'localhost',
     user: process.env.DB_USER,
@@ -13,14 +13,14 @@ const db = mysql.createConnection(
   console.log('You are now connected to the employeeTracker_db database.')
 );
 
-db.connect(function (err) {
+dbConnect.connect(function (err) {
   if (err) throw err;
   console.log('Connected to LOCAL SERVER.');
   terminalPrompt();
 });
 
 function terminalPrompt() {
-  inquirer.createPromptModule({
+  inquirer.prompt({
     name: 'selection',
     type: 'list',
     message: 'Please from the following options:',
@@ -40,7 +40,7 @@ function terminalPrompt() {
       'Delete an Employee',
       'Exit'
     ]
-  }).then((answer) => {
+  }).then(function (answer) {
     switch (answer.selection) {
       case 'View All Departments':
         viewAllDepartments();
@@ -82,16 +82,16 @@ function terminalPrompt() {
         deleteEmployee();
         break;
       case 'Exit':
-        db.end();
+        dbConnect.end();
         break;
     }
-  })
-};
+  });
+}
 
 // View All Departments
 function viewAllDepartments() {
   console.log('Viewing all departments...\n');
-  db.query('SELECT * FROM department', function (err, res) {
+  dbConnect.query('SELECT * FROM department', function (err, res) {
     if (err) throw err;
     console.table(res);
     terminalPrompt();
@@ -101,7 +101,7 @@ function viewAllDepartments() {
 // View All Roles
 function viewAllRoles() {
   console.log('Viewing all roles...\n');
-  db.query('SELECT * FROM role', function (err, res) {
+  dbConnect.query('SELECT * FROM role', function (err, res) {
     if (err) throw err;
     console.table(res);
     terminalPrompt();
@@ -111,7 +111,7 @@ function viewAllRoles() {
 // View All Employees
 function viewAllEmployees() {
   console.log('Viewing all employees...\n');
-  db.query('SELECT * FROM employee', function (err, res) {
+  dbConnect.query('SELECT * FROM employee', function (err, res) {
     if (err) throw err;
     console.table(res);
     terminalPrompt();
@@ -127,7 +127,7 @@ function addDepartment() {
       message: 'What is the name of the department you would like to add?'
     }
   ]).then((answer) => {
-    db.query('INSERT INTO department SET ?',
+    dbConnect.query('INSERT INTO department SET ?',
       {
         name: answer.department
       },
@@ -158,7 +158,7 @@ function addRole() {
       message: 'What is the department ID for this role?'
     }
   ]).then((answer) => {
-    db.query('INSERT INTO role SET ?',
+    dbConnect.query('INSERT INTO role SET ?',
       {
         title: answer.role,
         salary: answer.salary,
@@ -196,7 +196,7 @@ function addEmployee() {
       message: 'What is the manager ID for this employee?'
     }
   ]).then((answer) => {
-    db.query('INSERT INTO employee SET ?',
+    dbConnect.query('INSERT INTO employee SET ?',
       {
         first_name: answer.first_name,
         last_name: answer.last_name,
@@ -225,7 +225,7 @@ function updateEmployeeRole() {
       message: 'What is the new role ID for this employee?'
     }
   ]).then((answer) => {
-    db.query('UPDATE employee SET ? WHERE ?',
+    dbConnect.query('UPDATE employee SET ? WHERE ?',
       [
         {
           role_id: answer.role_id
@@ -256,7 +256,7 @@ function updateEmployeeManager() {
       message: 'What is the new manager ID for this employee?'
     }
   ]).then((answer) => {
-    db.query('UPDATE employee SET ? WHERE ?',
+    dbConnect.query('UPDATE employee SET ? WHERE ?',
       [
         {
           manager_id: answer.manager_id
@@ -282,7 +282,7 @@ function viewAllEmployeesByManager() {
       message: 'What is the ID of the manager you would like to view?'
     }
   ]).then((answer) => {
-    db.query('SELECT * FROM employee WHERE ?',
+    dbConnect.query('SELECT * FROM employee WHERE ?',
       {
         manager_id: answer.manager_id
       },
@@ -303,7 +303,7 @@ function viewAllEmployeesByDepartment() {
       message: 'What is the ID of the department you would like to view?'
     }
   ]).then((answer) => {
-    db.query('SELECT * FROM employee WHERE ?',
+    dbConnect.query('SELECT * FROM employee WHERE ?',
       {
         department_id: answer.department_id
       },
@@ -324,7 +324,7 @@ function deleteDepartment() {
       message: 'What is the ID of the department you would like to delete?'
     }
   ]).then((answer) => {
-    db.query('DELETE FROM department WHERE ?',
+    dbConnect.query('DELETE FROM department WHERE ?',
       {
         id: answer.department_id
       },
@@ -345,7 +345,7 @@ function deleteRole() {
       message: 'What is the ID of the role you would like to delete?'
     }
   ]).then((answer) => {
-    db.query('DELETE FROM role WHERE ?',
+    dbConnect.query('DELETE FROM role WHERE ?',
       {
         id: answer.role_id
       },
@@ -366,7 +366,7 @@ function deleteEmployee() {
       message: 'What is the ID of the employee you would like to delete?'
     }
   ]).then((answer) => {
-    db.query('DELETE FROM employee WHERE ?',
+    dbConnect.query('DELETE FROM employee WHERE ?',
       {
         id: answer.employee_id
       },
