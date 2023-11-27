@@ -32,7 +32,7 @@ npm run start
 
 ![screenshot](images/Challenge_12-Employee-Tracker.jpg)
 
-[Walkthrough Video]()
+[Walkthrough Video](https://youtu.be/D0RcKzO4VS4)
 
 - https://www.npmjs.com/package/mysql2
 - https://www.npmjs.com/package/dotenv
