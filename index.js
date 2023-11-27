@@ -152,11 +152,11 @@ function addRole() {
       type: 'input',
       message: 'What is the salary for this role?'
     },
-    {
-      name: 'department_id',
-      type: 'input',
-      message: 'What is the department ID for this role?'
-    }
+    // {
+    //   name: 'department_id',
+    //   type: 'input',
+    //   message: 'What is the department ID for this role?'
+    // }
   ]).then((answer) => {
     dbConnect.query('INSERT INTO role SET ?',
       {
